@@ -2,7 +2,7 @@ const User = require("../models/user.model")
 const bcrypt = require("bcrypt")
 const emailValidator = require("email-validator")
 
-module.exports = userRegister = async (req, res) => {
+module.exports.userRegister = async (req, res) => {
     const { name, email, password, confirmPassword } = req.body
     const uniqueEmail = await User.findOne({ email })
     if (uniqueEmail) {
@@ -28,4 +28,27 @@ module.exports = userRegister = async (req, res) => {
     catch (err) {
         res.status(500).json({ Error: "Error in registration" })
     }
+}
+
+module.exports.userLogin = async (req, res) => {
+    const { email, password } = req.body
+    const uniqueEmail = await User.findOne({ email })
+    if (!uniqueEmail) {
+        res.status(404).json({ message: "This email is not Registered" })
+        return
+    }
+
+    try {
+        const matchPassword = await bcrypt.compare(password, uniqueEmail.password)
+        if (!matchPassword) {
+            res.status(404).json({ message: "Wrong Password! Please Enter correct Password" })
+        }
+        else {
+            res.status(200).json({ message: `Welcome ${uniqueEmail.name}! Login Successfull` })
+        }
+    }
+    catch (err) {
+        res.status(500).json({ Error: "Some Error Occured in Login" })
+    }
+
 }
