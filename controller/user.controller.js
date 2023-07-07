@@ -49,21 +49,24 @@ module.exports.userLogin = async (req, res) => {
         const matchPassword = await bcrypt.compare(password, uniqueEmail.password)
         if (!matchPassword) {
             res.status(404).json({ message: "Wrong Password! Please Enter correct Password" })
+            return
         }
         else {
             res.status(200).json({ message: `Welcome ${uniqueEmail.name}! Login Successfull` })
-        }
 
-        const token = User.jwtToken()
-        User.password = undefined
+            const token = User.jwtToken()
+            User.password = undefined
 
-        const cookieOption = {
-            maxAge: 24 * 60 * 60 * 1000,
-            httpOnly: true
+            const cookieOption = {
+                maxAge: 24 * 60 * 60 * 1000,
+                httpOnly: true
+            }
+            res.cookie("token", token, cookieOption)
+            res.status(200).json({ success: true, data: User })
         }
-        res.cookie("token", token, cookieOption)
-        res.status(200).json({ success: true, data: user })
     }
+
+
     catch (err) {
         res.status(500).json({ Error: "Some Error Occured in Login" })
     }
