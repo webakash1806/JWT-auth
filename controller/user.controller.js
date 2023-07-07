@@ -4,6 +4,13 @@ const emailValidator = require("email-validator")
 
 module.exports.userRegister = async (req, res) => {
     const { name, email, password, confirmPassword } = req.body
+
+    const validEmail = emailValidator.validate(email)
+    if (!validEmail) {
+        res.status(404).json({ message: "Please enter Valid email" })
+        return
+    }
+
     const uniqueEmail = await User.findOne({ email })
     if (uniqueEmail) {
         res.status(404).json({ message: "User is already registered with this email" })
@@ -46,9 +53,20 @@ module.exports.userLogin = async (req, res) => {
         else {
             res.status(200).json({ message: `Welcome ${uniqueEmail.name}! Login Successfull` })
         }
+
+        const token = User.jwtToken()
+        User.password = undefined
+
+        const cookieOption = {
+            maxAge: 24 * 60 * 60 * 1000,
+            httpOnly: true
+        }
+        res.cookie("token", token, cookieOption)
+        res.status(200).json({ success: true, data: user })
     }
     catch (err) {
         res.status(500).json({ Error: "Some Error Occured in Login" })
     }
+
 
 }
