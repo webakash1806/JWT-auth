@@ -52,17 +52,18 @@ module.exports.userLogin = async (req, res) => {
             return
         }
         else {
-            res.status(200).json({ message: `Welcome ${uniqueEmail.name}! Login Successfull` })
 
-            const token = User.jwtToken()
-            User.password = undefined
+            const token = uniqueEmail.jwtToken()
+            uniqueEmail.password = undefined
 
             const cookieOption = {
                 maxAge: 24 * 60 * 60 * 1000,
                 httpOnly: true
             }
             res.cookie("token", token, cookieOption)
-            res.status(200).json({ success: true, data: User })
+
+            res.status(200).json({ message: `Welcome ${uniqueEmail.name}! Login Successfull` })
+
         }
     }
 
