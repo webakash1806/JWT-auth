@@ -57,9 +57,10 @@ module.exports.userLogin = async (req, res) => {
             uniqueEmail.password = undefined
 
             const cookieOption = {
-                maxAge: 24 * 60 * 60 * 1000,
+                maxAge: 10 * 60 * 60 * 1000,
                 httpOnly: true
             }
+
             res.cookie("token", token, cookieOption)
 
             res.status(200).json({ message: `Welcome ${uniqueEmail.name}! Login Successfull` })
