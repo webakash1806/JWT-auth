@@ -79,11 +79,42 @@ module.exports.getUser = async (req, res) => {
     try {
         const userDetails = await User.findById(uniqueId)
         res.status(200).json({ success: true, data: userDetails })
+        return
     }
     catch (e) {
         res.status(404).json({ success: false, message: e.message })
     }
 }
+
+
+
+// const express = require('express');
+// const cookieParser = require('cookie-parser');
+
+// const app = express();
+
+// app.use(cookieParser());
+
+// app.get('/login', (req, res) => {
+//   // Get the names of the cookies that you want to delete.
+//   const cookiesToDelete = ['loginToken', 'sessionID'];
+
+//   // Create a function to delete the cookies.
+//   const deleteCookies = (cookies) => {
+//     const response = res.clearCookies(cookies);
+//     response.cookie('loginToken', '', { expires: new Date(0) });
+//     response.cookie('sessionID', '', { expires: new Date(0) });
+//     return response;
+//   };
+
+//   // Call the function to delete the cookies.
+//   res = deleteCookies(cookiesToDelete);
+
+//   // Render the login page.
+//   res.render('login');
+// });
+
+// app.listen(3000, () => console.log('Server started on port 3000'));
 
 module.exports.logoutUser = (req, res) => {
     const cookiesOption = {
@@ -93,8 +124,10 @@ module.exports.logoutUser = (req, res) => {
     try {
         res.cookie("token", null, cookiesOption)
         res.status(200).json({ success: true, message: "Loged Out" })
+        return
     }
     catch (e) {
         res.status(404).json({ message: e.message })
+        return
     }
 }
