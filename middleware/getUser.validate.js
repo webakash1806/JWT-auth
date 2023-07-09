@@ -8,6 +8,7 @@ module.exports = getUser = async (req, res, next) => {
             sucess: false,
             message: "Login again!"
         })
+        return
     }
 
     try {
@@ -15,8 +16,8 @@ module.exports = getUser = async (req, res, next) => {
         req.userDetails = { id: tokenVerify.id, email: tokenVerify.email }
     }
     catch (e) {
-        res.status(404).json({
-            success: false,
+        return res.status(404).json({
+            succ: false,
             message: e.message
         })
     }
