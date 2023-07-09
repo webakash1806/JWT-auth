@@ -78,15 +78,23 @@ module.exports.getUser = async (req, res) => {
 
     try {
         const userDetails = await User.findById(uniqueId)
-        res.status(200).json({
-            success: true,
-            data: userDetails
-        })
+        res.status(200).json({ success: true, data: userDetails })
     }
     catch (e) {
-        res.status(404).json({
-            success: false,
-            message: e.message
-        })
+        res.status(404).json({ success: false, message: e.message })
+    }
+}
+
+module.exports.logoutUser = (req, res) => {
+    const cookiesOption = {
+        expiresAt: new Date(),
+        httpOnly: true
+    }
+    try {
+        res.cookie("token", null, cookiesOption)
+        res.status(200).json({ success: true, message: "Loged Out" })
+    }
+    catch (e) {
+        res.status(404).json({ message: e.message })
     }
 }
