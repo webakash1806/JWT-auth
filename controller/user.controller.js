@@ -19,8 +19,8 @@ module.exports.userRegister = async (req, res) => {
 
     try {
         const hashPassword = await bcrypt.hash(password, 8)
-        const hashConfPassword = await bcrypt.hash(confirmPassword, 8)
-        const user = new User({ name, email, password: hashPassword, confirmPassword: hashConfPassword })
+        // const hashConfPassword = await bcrypt.hash(confirmPassword, 8)
+        const user = new User({ name, email, password: hashPassword })
         if (password === confirmPassword) {
             const data = await user.save()
             res.status(200).json({
@@ -67,11 +67,26 @@ module.exports.userLogin = async (req, res) => {
 
         }
     }
-
-
     catch (err) {
         res.status(500).json({ Error: "Some Error Occured in Login" })
     }
+}
 
 
+module.exports.getUser = async (req, res) => {
+    const uniqueId = req.userDetails.id
+
+    try {
+        const userDetails = await User.findById(uniqueId)
+        res.status(200).json({
+            success: true,
+            data: userDetails
+        })
+    }
+    catch (e) {
+        res.status(404).json({
+            success: false,
+            message: e.message
+        })
+    }
 }
