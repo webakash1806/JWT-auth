@@ -4,10 +4,7 @@ module.exports = getUser = async (req, res, next) => {
     const token = (req.cookies && req.cookies.token) || null
 
     if (!token) {
-        res.status(404).json({
-            sucess: false,
-            message: "Login again!"
-        })
+        res.status(404).json({ sucess: false, message: "Login again!" })
         return
     }
 
@@ -16,10 +13,7 @@ module.exports = getUser = async (req, res, next) => {
         req.userDetails = { id: tokenVerify.id, email: tokenVerify.email }
     }
     catch (e) {
-        return res.status(404).json({
-            succ: false,
-            message: e.message
-        })
+        return res.status(404).json({ succ: false, message: e.message })
     }
 
     next()
