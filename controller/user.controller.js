@@ -19,8 +19,8 @@ module.exports.userRegister = async (req, res) => {
 
     try {
         const hashPassword = await bcrypt.hash(password, 8)
-        // const hashConfPassword = await bcrypt.hash(confirmPassword, 8)
-        const user = new User({ name, email, password: hashPassword })
+        const hashConfPassword = await bcrypt.hash(confirmPassword, 8)
+        const user = new User({ name, email, password: hashPassword, confirmPassword: hashConfPassword })
         if (password === confirmPassword) {
             const data = await user.save()
             res.status(200).json({
@@ -33,7 +33,7 @@ module.exports.userRegister = async (req, res) => {
         }
     }
     catch (err) {
-        res.status(500).json({ Error: "Error in registration" })
+        res.status(500).json({ Error: err.message })
     }
 }
 
@@ -68,7 +68,7 @@ module.exports.userLogin = async (req, res) => {
         }
     }
     catch (err) {
-        res.status(500).json({ Error: "Some Error Occured in Login" })
+        res.status(500).json({ Error: err.message })
     }
 }
 
@@ -77,8 +77,8 @@ module.exports.getUser = async (req, res) => {
     const uniqueId = req.userDetails.id
 
     try {
-        const userDetails = await User.findById(uniqueId)
-        res.status(200).json({ success: true, data: userDetails })
+        const userData = await User.findById(uniqueId)
+        res.status(200).json({ success: true, data: userData })
         return
     }
     catch (e) {
@@ -87,42 +87,13 @@ module.exports.getUser = async (req, res) => {
 }
 
 
-
-// const express = require('express');
-// const cookieParser = require('cookie-parser');
-
-// const app = express();
-
-// app.use(cookieParser());
-
-// app.get('/login', (req, res) => {
-//   // Get the names of the cookies that you want to delete.
-//   const cookiesToDelete = ['loginToken', 'sessionID'];
-
-//   // Create a function to delete the cookies.
-//   const deleteCookies = (cookies) => {
-//     const response = res.clearCookies(cookies);
-//     response.cookie('loginToken', '', { expires: new Date(0) });
-//     response.cookie('sessionID', '', { expires: new Date(0) });
-//     return response;
-//   };
-
-//   // Call the function to delete the cookies.
-//   res = deleteCookies(cookiesToDelete);
-
-//   // Render the login page.
-//   res.render('login');
-// });
-
-// app.listen(3000, () => console.log('Server started on port 3000'));
-
 module.exports.logoutUser = (req, res) => {
     const cookiesOption = {
         expiresAt: new Date(),
         httpOnly: true
     }
     try {
-        res.cookie("token", null, cookiesOption)
+        res.cookie("token", "", cookiesOption)
         res.status(200).json({ success: true, message: "Loged Out" })
         return
     }
